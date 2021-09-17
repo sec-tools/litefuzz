@@ -1,0 +1,7 @@
+future
+psutil
+pytest
+tqdm
+subprocess32
+winappdbg
+pyautogui

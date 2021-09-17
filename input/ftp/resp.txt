@@ -1,0 +1,10 @@
+220 ProFTPD Server (Debian) [::ffff:localhost]
+331 Password required for user
+230 User user logged in
+257 "/" is your current location
+200 TYPE is now 8-bit binary
+227 Entering Passive Mode (195,154,194,249,172,166)
+200 PORT command successful.
+150 Opening ASCII mode data
+226 Transfer OK
+221 Goodbye
