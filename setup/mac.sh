@@ -49,12 +49,7 @@ rm get-pip.py
 
 echo -e '\n> installing python packages\n'
 
-#
-# TODO: test --user installation
-#
-# pip install -r requirements/requirements-py2.txt
 pip install -r requirements/requirements-py2.txt --user
-# pip3 install -r requirements/requirements-py3.txt
 pip3 install -r requirements/requirements-py3.txt --user
 
 #
@@ -66,14 +61,6 @@ echo -e '\n> disabling ReportCrash and friends\n'
 
 launchctl unload -w /System/Library/LaunchAgents/com.apple.ReportCrash.plist
 sudo launchctl unload -w /System/Library/LaunchDaemons/com.apple.ReportCrash.Root.plist
-
-#
-# TODO: test
-#
-# sudo -uw /
-# chmod 000 /System/Library/CoreServices/SubmitDiagInfo
-# sudo mv /System/Library/CoreServices/SubmitDiagInfo /System/Library/CoreServices/SubmitDiagInfo.DISABLED
-#
 
 #
 # disable computer sleeping so it doesn't interfere with the fuzzing process
