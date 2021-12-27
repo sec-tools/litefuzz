@@ -736,6 +736,21 @@ com.adobe.photoshop-image           /System/Applications/Preview.app
 
 note: `-z` here enables [Guard Malloc](https://www.manpagez.com/man/3/libgmalloc/) heap error checking in order to detect subtle heap corruption bugs
 
+**mac note**
+
+Some GUI targets may fail to be killed after each iteration's timeout and become unresponsive. To mitigate this, you can run a script that looks like this in another terminal to just periodically kill them in batch to reduce manual effort and monitoring, else the fuzzing process may be affected.
+
+```
+#!/bin/bash
+ps -Af | grep -ie "$1" | awk '{print $2}' | xargs kill -9
+```
+
+```
+$ while :; do ./pkill.sh "Process Name /Users/test"; sleep 360; done
+```
+
+*/Users/test* (example for the first part of the path where temp files are being passed to the local GUI app, FUZZ becomes a path during execution) was chosen as you need a unique string to kill for processes, and if you only use the Process Name, it will kill the fuzzing process as it contains the Process Name too.
+
 **enumerating file handlers on Windows**
 
 Using the [AssocQueryString](https://github.com/sec-tools/WindowsFileHandlerEnumeration/) script with the *assoc* command can map file extensions to default applications.
