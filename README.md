@@ -16,9 +16,6 @@ A multi-platform fuzzer for poking at userland binaries and servers
     - [targets](#targets)
     - [triage](#triage)
   - [getting started](#getting-started)
-    - [linux](#linux-1)
-    - [mac](#mac-1)
-    - [windows](#windows-1)
     - [tests](#tests)
       - [unit tests](#unit-tests)
       - [crashing app tests](#crashing-app-tests)
@@ -217,31 +214,9 @@ Again, the fuzzer can run on and support local apps, clients and servers on Linu
 
 ## getting started
 
-Most of the setup across platforms has been automated with the scripts in the [setup](https://github.com/sec-tools/beta/blob/main/README.md#setup) directory. Simply run those from the litefuzz root and it should save you a lot of time and help enable some of what's needed for automated deployments. It's useful to use a VM to setup a clean OS and fuzzing environment as among other things its snapshot capabilities come in handy.
+Most of the setup across platforms has been automated with the scripts in the [setup](https://github.com/sec-tools/litefuzz/blob/main/README.md#setup) directory. Simply run those from the litefuzz root and it should save you a lot of time and help enable some of what's needed for automated deployments. It's useful to use a VM to setup a clean OS and fuzzing environment as among other things its snapshot capabilities come in handy.
 
-```
-git clone https://github.com/sec-tools/litefuzz
-cd litefuzz
-chmod +x setup/[OS].sh (linux/mac)
-setup/[OS][.sh|bat]
-```
-
-### linux
-Make sure you run it as a user that has sudo privileges.
-
-`user@box:~$ setup/linux.sh`
-
-note: if using py2, ignore any Pyradamsa pip failures as Pyradamsa supports py3 only.
-
-### mac
-Again, make sure you run it as a user that has sudo privileges.
-
-`mac:~ user$ setup/mac.sh`
-
-### windows
-Open an Administrator command prompt and run the script. It will pull down a lot of packages, so it may take some time for the setup to complete.
-
-`C:\litefuzz> setup\windows.bat`
+See [INSTALL.md](https://github.com/sec-tools/litefuzz/blob/main/INSTALL.md) for details.
 
 ### tests
 
