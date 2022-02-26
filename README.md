@@ -136,7 +136,7 @@ In short...
 
 ## support
 
-Primarily tested on **Ubuntu Linux 20.04**, **Windows 10** and **Mac OS 11**. The fuzzer and setup scripts may work on slightly older or newer versions of these operating systems as well, but the majority of research, testing and development occurred in these environments. Python3 is supported and an effort was made to make the code compatiable with Python2 as well as it's necessary for fuzzing on Windows via [WinAppDbg](https://github.com/MarioVilas/winappdbg). Platform testing primarily occured on Intel-based hardware, but things seem to mostly work on Apple's M1 platform too (notable exceptions being on Linux the exploitable plugin for GDB probably isn't supported, nor is Pyradamsa). There are also setup scripts in setup/ to automate most or all of the tasks and depencency installation. It can generally fuzz native binaries on each platform, which are often compiled in C/C++, but it also catch crashes for Golang binaries as well (experimental).
+Primarily tested on **Ubuntu Linux 20.04** (lightly tested on 21.04), **Windows 10** and **Mac OS 11**. The fuzzer and setup scripts may work on slightly older or newer versions of these operating systems as well, but the majority of research, testing and development occurred in these environments. Python3 is supported and an effort was made to make the code compatiable with Python2 as well as it's necessary for fuzzing on Windows via [WinAppDbg](https://github.com/MarioVilas/winappdbg). Platform testing primarily occured on Intel-based hardware, but things seem to mostly work on Apple's M1 platform too (notable exceptions being on Linux the exploitable plugin for GDB probably isn't supported, nor is Pyradamsa). There are also setup scripts in setup/ to automate most or all of the tasks and depencency installation. It can generally fuzz native binaries on each platform, which are often compiled in C/C++, but it also catch crashes for Golang binaries as well (experimental).
 
 ### python versions
 
@@ -915,22 +915,58 @@ optional arguments:
 
 # trophies
 
-Litefuzz has fuzzed crashes out of various software packages such as
+Litefuzz has fuzzed crashes out of various software packages such as...
 
 * antiword
 * AppleScript (OS X)
+* ArangoDB VelocyPack
+* Avast authenticode-parser
+* Avast RetDec
+* BBC Audio Waveform
 * ColorSync (OS X)
 * Dynamsoft BarcodeReader
 * eot2ttf
 * evernote2md
+* faad2
+* Facebook's Origami Studio
+* FontForge
+* ForestDB
+* Gifsicle
+* GPUJPEG
+* GPAC Multimedia Framework
+* Google Draco
+* GoPro GPR
+* GtkRadiant
+* IIPImage Server
+* John The Ripper
+* Kyoto Cabinet
 * latex2rtf
+* libMeshb
+* libembroidery
+* libsndfile
+* Lion Vector Graphics (lvg)
+* L-SMASH
+* MindNode
+* minimp4
 * MiniWeb Server
+* MLpack
+* Nvidia Data Center GPU Manager
+* Numbers (OS X)
+* OpenJPEG
+* OpenOrienteering Mapper
 * OSM Express
+* Pages (OS X)
 * PBRT-Parser
-* RAE (OS X)
+* Pixar USD
+* Remote Apple Events (OS X)
+* Samsung rlottie
+* Samsung ThorVG
 * Shoutcast Server
+* Silo
 * syslog (OS X)
+* Tencent NCNN
 * TinyXML2
+* UEFITool
 * Ulfius Web Framework
 * zlib
 
