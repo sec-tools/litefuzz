@@ -4,7 +4,7 @@
 #
 # litefuzz project
 #
-# setup and install deps on Mac OS X (10: TODO and 11 tested)
+# setup and install deps on Mac OS X (11 and 12 tested)
 #
 # note: run as user with sudo privileges and in the litefuzz root directory
 #
@@ -45,7 +45,7 @@ curl https://bootstrap.pypa.io/pip/2.7/get-pip.py --output get-pip.py
 python get-pip.py
 rm get-pip.py
 
-# export PATH=$PATH:/Users/$(whoami)/Library/Python/2.7/bin
+export PATH=$PATH:/Users/$(whoami)/Library/Python/2.7/bin
 
 echo -e '\n> installing python packages\n'
 
