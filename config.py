@@ -38,6 +38,7 @@ supermin = False
 memdump_pid = None
 multibin = False
 multistr = False
+multinum = None
 mode = 0
 nofuzz = False
 pb = None

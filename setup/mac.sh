@@ -45,7 +45,7 @@ curl https://bootstrap.pypa.io/pip/2.7/get-pip.py --output get-pip.py
 python get-pip.py
 rm get-pip.py
 
-export PATH=$PATH:/Users/$(whoami)/Library/Python/2.7/bin
+# export PATH=$PATH:/Users/$(whoami)/Library/Python/2.7/bin
 
 echo -e '\n> installing python packages\n'
 

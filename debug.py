@@ -227,11 +227,18 @@ def run(cmdline, timeout):
                                            stderr=file,
                                            preexec_fn=os.setsid)
             else:
-                process = subprocess.Popen(cmdline,
-                                           stdin=open(config.current_input),
-                                           stdout=file,
-                                           stderr=file,
-                                           preexec_fn=os.setsid)
+                if(config.mode == settings.LOCAL): # don't do this for local clients/servers
+                    process = subprocess.Popen(cmdline,
+                                            stdin=open(config.current_input),
+                                            stdout=file,
+                                            stderr=file,
+                                            preexec_fn=os.setsid)
+                else:
+                    process = subprocess.Popen(cmdline,
+                                            stdin=None,
+                                            stdout=file,
+                                            stderr=file,
+                                            preexec_fn=os.setsid)
 
             if(config.mode == settings.LOCAL):
                 (output, error) = process.communicate(timeout=timeout)

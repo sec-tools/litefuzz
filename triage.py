@@ -38,12 +38,23 @@ def checkDebugger(cmdline):
     if(config.debug):
         print("entering checkDebugger()\n")
 
-    try:
-        with open(settings.FUZZ_INFO, 'rb') as file: # in case we get bytes
-            log = file.read().decode('utf-8', 'ignore')
-    except Exception as error:
-        print("\n[ERROR] triage.checkDebugger() @ read(FUZZ_INFO): %s\n" % error)
-        return FAILURE
+    #
+    # both local server and insulated apps should use FUZZ_OUTPUTS_DEBUG
+    #
+    if(config.mode == settings.LOCAL_SERVER): # as non-crashing server sessions may be reused and reading from unique log files may fail
+        try:
+            with open(settings.FUZZ_OUTPUTS_DEBUG, 'rb') as file: # in case we get bytes
+                log = file.read().decode('utf-8', 'ignore')
+        except Exception as error:
+            print("\n[ERROR] triage.checkDebugger() @ read(FUZZ_OUTPUTS_DEBUG): %s\n" % error)
+            return FAILURE
+    else:
+        try:
+            with open(settings.FUZZ_INFO, 'rb') as file:
+                log = file.read().decode('utf-8', 'ignore')
+        except Exception as error:
+            print("\n[ERROR] triage.checkDebugger() @ read(FUZZ_INFO): %s\n" % error)
+            return FAILURE
 
     #
     # if we catch an exception, run triage
@@ -221,15 +232,26 @@ def saveCrash(fault, info):
     crash_info = None
 
     #
-    # winappdbg has already given us this info
+    # winappdbg (win32) has already given us this info
     #
     if(misc.isUnix()):
-        try:
-            with open(settings.FUZZ_INFO, 'rb') as file: # in case we get bytes
-                crash_info = file.read().decode('utf-8', 'ignore')
-        except Exception as error:
-            print("\n[ERROR] triage.saveCrash() @ read(FUZZ_INFO): %s\n" % error)
-            return FAILURE
+        #
+        # both local server and insulated apps should use FUZZ_OUTPUTS_DEBUG
+        #
+        if(config.mode == settings.LOCAL_SERVER): # same as in checkDebugger()
+            try:
+                with open(settings.FUZZ_OUTPUTS_DEBUG, 'rb') as file: # in case we get bytes
+                    crash_info = file.read().decode('utf-8', 'ignore')
+            except Exception as error:
+                print("\n[ERROR] triage.saveCrash() @ read(FUZZ_OUTPUTS_DEBUG): %s\n" % error)
+                return FAILURE
+        else:
+            try:
+                with open(settings.FUZZ_INFO, 'rb') as file:
+                    crash_info = file.read().decode('utf-8', 'ignore')
+            except Exception as error:
+                print("\n[ERROR] triage.saveCrash() @ read(FUZZ_INFO): %s\n" % error)
+                return FAILURE
     else:
         crash_info = info
 
