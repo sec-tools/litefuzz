@@ -1,8 +1,8 @@
 # litefuzz
 
-A multi-platform fuzzer for poking at userland binaries and servers
+A multi-platform fuzzer for poking at userland binaries and servers.
 
-It's **recommended** that you use the [test](https://github.com/sec-tools/litefuzz/tree/test) branch as it contains notable bugs fixes and improvements and while being less tested than main, it has benefits and is worth a try for your fuzzing adventures.
+It's simple to setup, run and get results. See extensive documentation and examples below.
 
 - [litefuzz](#litefuzz)
   - [intro](#intro)
