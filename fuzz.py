@@ -207,7 +207,18 @@ def main(cmdline, inputs):
             if(misc.setupSession(files, None) != SUCCESS):
                 return FAILURE
 
-            n = misc.getRandomInt(0, (len(config.session) - 1))
+            if(config.multinum == None):
+                n = misc.getRandomInt(0, (len(config.session) - 1))
+            else:
+                if((config.multinum > 0) and (config.multinum <= len(config.session))):
+                    n = (config.multinum - 1) # user counts from 1, machine counts from 0
+                else:
+                    if(config.debug):
+                        print("[INFO] invalid multinum=%d, reverting back to choosing a random input\n" % config.multinum)
+
+                    n = misc.getRandomInt(0, (len(config.session) - 1))
+
+            # n = 1 # CHANGE: fuzz packet 2 only
 
             if(config.nofuzz == False):
                 if(config.debug):
@@ -227,7 +238,21 @@ def main(cmdline, inputs):
             if(misc.setupSession(None, data) != SUCCESS):
                 return FAILURE
 
-            n = misc.getRandomInt(0, (len(config.session) - 1))
+            #
+            # testing for multistr /w --multinum, eg. FTP would be good
+            #
+
+            if(config.multinum == None):
+                n = misc.getRandomInt(0, (len(config.session) - 1))
+            else:
+                if((config.multinum > 0) and (config.multinum <= len(config.session))):
+                    n = (config.multinum - 1)
+                else:
+                    if(config.debug):
+                        print("[INFO] invalid multinum=%d, reverting back to choosing a random input\n" % config.multinum)
+
+                    n = misc.getRandomInt(0, (len(config.session) - 1))
+
             s = bytearray(config.session[n].encode())
 
             if(config.nofuzz == False):
@@ -267,16 +292,28 @@ def main(cmdline, inputs):
             run.main(cmdline)
         elif((config.mode == settings.LOCAL_CLIENT) or (config.mode == settings.LOCAL_SERVER)):
             net.main(cmdline)
+
+            if(misc.isUnix()):
+                if(misc.copyDebugOutput() != SUCCESS):
+                    if(config.debug):
+                        print("[ERROR] misc.postIteration() @ copyDebugOutput() failed\n")
+                        return FAILURE
+
+                if(config.mode == settings.LOCAL_SERVER): # don't call checkDebugger() on local client
+                    triage.checkDebugger(cmdline)
         else: # remote client and server mode
             if(config.attach or config.report_crash): # hybrid features
                 net.main(cmdline)
             else: # no visibility, handle crashes without triage
-                if(net.main(cmdline) != SUCCESS and config.count > 1):
+                # if(net.main(cmdline) != SUCCESS and config.count > 1):
+                result = net.main(cmdline)
+
+                if((result != SUCCESS) and (config.count > 1)):
                     misc.clientServerCrash()
                     misc.displayCount(pb, 0, True)
 
                     if(config.prot == 'tcp'): # tcp server support only
-                        if(settings.TCP_KEEP_GOING):
+                        if(settings.TCP_KEEP_GOING and (config.count != config.iterations)):
                             print("\n\n[!] check if target down, sleeping %d seconds before trying to continue fuzzing...\n" % (settings.NET_SLEEP_TIME * 3))
                             time.sleep(settings.NET_SLEEP_TIME * 3)
 
@@ -288,6 +325,25 @@ def main(cmdline, inputs):
                             break
                     else:
                         break
+                else:
+                    if(misc.checkPort(config.prot, config.host, config.port) == False): # check if server is down
+
+                        misc.clientServerCrash()
+                        misc.displayCount(pb, 0, True)
+
+                        if(config.prot == 'tcp'): # tcp server support only
+                            if(settings.TCP_KEEP_GOING and (config.count != config.iterations)):
+                                print("\n\n[!] check if target down, sleeping %d seconds before trying to continue fuzzing...\n" % (settings.NET_SLEEP_TIME * 3))
+                                time.sleep(settings.NET_SLEEP_TIME * 3)
+
+                                # if(misc.checkPort(config.prot, config.host, config.port) == False):
+                                #     break
+
+                                # config.down = False
+                            else:
+                                break
+                        else:
+                            break
 
         misc.displayCount(pb, 0, True)
 

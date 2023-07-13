@@ -348,6 +348,9 @@ def checkForCrash(cmdline):
             if(config.process.returncode):
                 print("returncode=%d\n" % config.process.returncode)
 
+        if(os.path.isfile(settings.FUZZ_OUTPUT)):
+            checkForCrashSSP()
+
         if(config.process.returncode == SIGABRT or
            config.process.returncode == SIGFPE  or
            config.process.returncode == SIGSEGV):
@@ -356,6 +359,30 @@ def checkForCrash(cmdline):
         if(config.golang):
             if(config.process.returncode == SIGGO):
                 return triage.unix(cmdline)
+
+    return SUCCESS
+
+#
+# check for stack smashing or buffer overflow detected
+# and if so, formally wait for the process return code
+#
+def checkForCrashSSP():
+    output = None
+
+    try:
+        with open(settings.FUZZ_OUTPUT, 'r') as file:
+            output = file.read()
+    except UnicodeDecodeError:
+        return FAILURE
+    except Exception as error:
+        print("\n[ERROR] misc.checkForCrashSSP() @ read(output): %s\n" % error)
+        return FAILURE
+
+    if('detected ***' in output):
+        if(config.debug):
+            print("%s" % output)
+
+        config.process.wait()
 
     return SUCCESS
 
@@ -509,7 +536,7 @@ def addExtExe(name):
 # copy output to global output for visibility / debugging purposes
 #
 # copy .out file to /tmp/litefuzz/out for local apps and clients
-# copy .txt file to /tmp/litefuzz/out for local servers and insulated apps (running in a debugger)
+# copy .txt file to /tmp/litefuzz/outs for local servers and insulated apps (running in a debugger)
 #
 def copyDebugOutput():
     if(isWin32()): # no stdout support on windows
@@ -526,9 +553,9 @@ def copyDebugOutput():
                     shutil.copy(settings.FUZZ_OUTPUT, settings.FUZZ_OUTPUT_DEBUG)
             else:
                 if(config.debug):
-                    print("\ncopying %s to %s\n" % (settings.FUZZ_INFO_STATIC, settings.FUZZ_OUTPUT_DEBUG))
+                    print("\ncopying %s to %s\n" % (settings.FUZZ_INFO_STATIC, settings.FUZZ_OUTPUTS_DEBUG))
 
-                shutil.copy(settings.FUZZ_INFO_STATIC, settings.FUZZ_OUTPUT_DEBUG)
+                shutil.copy(settings.FUZZ_INFO_STATIC, settings.FUZZ_OUTPUTS_DEBUG)
         except Exception as error:
             print("\n[ERROR] misc.copyDebugOutput() failed: %s\n" % error)
             return FAILURE
@@ -1813,6 +1840,7 @@ def setupNewIteration(cmdline):
     settings.FUZZ_DIFF_ORIG = settings.RUN_DIR + 'fuzz' + '_' + name + '.diff.orig'
     settings.FUZZ_DIFF_FUZZ = settings.RUN_DIR + 'fuzz' + '_' + name + '.diff.fuzz'
     settings.FUZZ_OUTPUT_DEBUG = settings.TMP_DIR + os.sep + 'out'
+    settings.FUZZ_OUTPUTS_DEBUG = settings.TMP_DIR + os.sep + 'outs' # local server / insulated app
 
     #
     # insulate mode runs the local app in a debugger, so FUZZ_INFO should be static
@@ -1913,6 +1941,10 @@ def transformCmdline(cmdline):
 
     cmdline = shlex.split(cmdline)
     cmds = len(cmdline)
+
+    if(cmds < 1):
+        print("[ERROR] cmdline cannot be empty")
+        sys.exit(FAILURE)
 
     i = 0
 

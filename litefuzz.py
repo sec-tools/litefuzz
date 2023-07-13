@@ -42,6 +42,7 @@ class LiteFuzzer(object):
         self.reuse = args.reuse
         self.multibin = args.multibin
         self.multistr = args.multistr
+        self.multinum = args.multinum
         self.insulate = args.insulate
         self.nofuzz = args.nofuzz
         self.key = args.key
@@ -183,6 +184,7 @@ class LiteFuzzer(object):
         config.maxtime = float(self.maxtime)
         config.multibin = self.multibin
         config.multistr = self.multistr
+        config.multinum = self.multinum
         config.insulate = self.insulate
         config.nofuzz = self.nofuzz
         config.key = self.key

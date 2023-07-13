@@ -117,6 +117,11 @@ def arg_parse():
                         action="store_true",
                         help="use multiple requests or responses within input for fuzzing simple string-based network sessions")
 
+    parser.add_argument("--multinum",
+                        "--multinum",
+                        type=int,
+                        help="only fuzz this specific input in multi modes (eg. 2)")
+
     parser.add_argument("-u",
                         "--insulate",
                         default=False,
