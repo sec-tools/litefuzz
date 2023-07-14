@@ -1,8 +1,8 @@
 # litefuzz
 
-A multi-platform fuzzer for poking at userland binaries and servers.
+A multi-platform fuzzer for poking at userland binaries, clients and servers.
 
-It's simple to setup, run and get results. See extensive documentation and examples below.
+**Simple setup to start fuzzing on Linux, Mac and Windows**. It also comes with extensive documentation and examples below.
 
 - [litefuzz](#litefuzz)
   - [intro](#intro)
@@ -72,14 +72,16 @@ It's simple to setup, run and get results. See extensive documentation and examp
 
 ## intro
 
-Litefuzz is meant to serve a purpose: fuzz and triage on all the major platforms, support both CLI/GUI apps, network clients and servers in order to find security-related bugs. It simplifies the process and makes it easy to discover security bugs in many different targets, across platforms, while just making a few honest trade-offs.
+**Litefuzz is meant to serve a purpose: fuzz and triage on all the major platforms, support both CLI/GUI apps, network clients and servers in order to find security-related bugs.**
+
+It simplifies the process and makes it easy to discover security bugs in many different targets, across platforms, while just making a few honest trade-offs.
 
 It isn't built for speed, scalability or meant to win any prizes in academia. It applies simple techniques at various angles to yield results. For console-based file fuzzing, you should probably just use [AFL](https://lcamtuf.coredump.cx/afl/). It has superior performance, instrumention capabilities (and faster non-instrumented execs), scale and can make freakin' jpegs out of [thin air](https://web.archive.org/web/20210118070714/http://lcamtuf.blogspot.com/2014/11/pulling-jpegs-out-of-thin-air.html). For networking fuzzing, the [mutiny fuzzer](https://github.com/Cisco-Talos/mutiny-fuzzer) also works well if you have PCAPs to replay and [frizzer](https://github.com/demantz/frizzer) looks promising as well. But if you want to give this one a try, it can fuzz those kinds of targets across platforms with just a single tool.
 
 ./ and give your target... a lite fuzz.
 
 ```
-$ sudo apt install latex2rtf
+$ sudo apt install -y latex2rtf
 
 $ ./litefuzz.py -l -c "latex2rtf FUZZ" -i input/tex -o crashes/latex2rtf -n 1000 -z
 --========================--
@@ -106,15 +108,23 @@ This is a simple local target which AFL++ is perfectly capable of handling and j
 
 ## why
 
-Yes, another fuzzer and one that doesn't track all that well with the current trends and conventions. Trade-offs were made to address certain requirements. These requirements being a fuzzer that works by default on multiple platforms, fuzzes both local and network targets and is very easy to use. Not trying to convince anybody of anything, but let's provide some context. Some targets require a lot of effort to integrate fuzzers such as AFL into the build chain. This is not a problem as this fuzzer does not require instrumentation, sacraficing the precise coverage gained by instrumentation for ease and portability. AFL also doesn't support network fuzzing out of the box, and while there are projects based on it that do, they are far from straightforward to use and usually require more code modifications and harnesses to work (similar story with [Libfuzzer](https://llvm.org/docs/LibFuzzer.html)). It doesn't do parallel fuzzing, nor support anything like the blazing speed improvments that [persistent mode](https://lcamtuf.blogspot.com/2015/06/new-in-afl-persistent-mode.html) can provide, so it cannot scale anywhere close to what fuzzers with such capabilities. Again, this is not a state-of-the-art fuzzer. But it doesn't require source code, properly up a build or certain OS features. It can even fuzz some network client GUIs and interactive apps. It lives off the land in a lot of ways and many of the features such as mutators and minimization were just written from scratch.
+Yes, another fuzzer and one that doesn't track all that well with the current trends and conventions. Trade-offs were made to address certain requirements. These requirements being a fuzzer that works by default on multiple platforms, fuzzes both local and network targets and is very easy to use. Not trying to convince anybody of anything, but let's provide some context. Some targets require a lot of effort to integrate fuzzers such as AFL into the build chain. This is not a problem as this fuzzer does not require instrumentation, sacraficing the precise coverage gained by instrumentation for ease and portability. AFL also doesn't support network fuzzing out of the box, and while there are projects based on it that do, they are far from straightforward to use and usually require more code modifications and harnesses to work (similar story with [Libfuzzer](https://llvm.org/docs/LibFuzzer.html)).
 
-It was designed to "just work" and effort has been put into automating the setup and installation for the few dependencies it needs. This fuzzer was written to serve a purpose, to provide value in a lot of different target scenarios and environments and most importantly and for what all fuzzers should ultimately be judged on: the ability to find bugs. And **it does find** [bugs](https://github.com/sec-tools/beta/blob/main/README.md#trophies). It doesn't presume there is target source code, so it can cover closed source software fairly well. It can run as part of automation with little modification, but is geared towards being fun to use for vulnerability researchers. It is however more helpful to think of it as a R&D project rather than a fully-fledged product. Also, there's no complicated setup where it's slightly broken out of the box or needs more work to get it running on modern operating systems. It's been tested working on Ubuntu Linux 20.04, Mac OS 11 and Windows 10 and comes with fully functional scripts that do just about everything for you in order to setup a ready-to-fuzz environment.
+It doesn't do parallel fuzzing, nor support anything like the blazing speed improvments that [persistent mode](https://lcamtuf.blogspot.com/2015/06/new-in-afl-persistent-mode.html) can provide, so it cannot scale anywhere close to what fuzzers with such capabilities. Again, this is not a state-of-the-art fuzzer. But it doesn't require source code, properly up a build or certain OS features. It can even fuzz some network client GUIs and interactive apps. It lives off the land in a lot of ways and many of the features such as mutators and minimization were just written from scratch.
+
+It was designed to "just work" and effort has been put into automating the setup and installation for the few dependencies it needs. This fuzzer was written to serve a purpose, to provide value in a lot of different target scenarios and environments and most importantly and for what all fuzzers should ultimately be judged on: the ability to find bugs. And **it does find** [bugs](https://github.com/sec-tools/beta/blob/main/README.md#trophies). It doesn't presume there is target source code, so it can cover closed source software fairly well. It can run as part of automation with little modification, but is geared towards being fun to use for vulnerability researchers. It is however more helpful to think of it as a R&D project rather than a fully-fledged product. Also, there's no complicated setup where it's slightly broken out of the box or needs more work to get it running on modern operating systems.
+
+It's been tested working on Ubuntu Linux, Mac and Windows and comes with fully functional scripts that do just about everything for you in order to setup a ready-to-fuzz environment.
 
 **Once the setup script completes, it only takes a few minutes to get started fuzzing a ton of different targets.**
 
 ## how it works
 
-Litefuzz supports three different modes: local, client and server. Local means targeting local binaries, which on Linux/Mac are launched via subprocess with automatic GDB and LLDB triage support respectively on crashes and via [WinAppDbg](https://github.com/MarioVilas/winappdbg) on Windows. Crashes are written to a local crash directory and sorted by fault type, such as read/write AVs or SIGABRT/SIGSEGV along with the file hashes. All unique crashes are triaged as it fuzzes and this data along with target output (as available) is also captured and placed as artifacts in the same directory. It's also possible to replay crashes with `--replay` and providing the crashing file. In `local` client mode, the input directory should contain a server greeting, response or otherwise data that a client would expect when connecting to a server. As of now only one "shot" is implementated for network fuzzing with no complex session support. The client is launched via command line and debugged the same as when file fuzzing. A listener is setup to support this scenario, yes its a slow and borderline manual labor but it works. If a crash is detected, it is replayed in gdb to get the triage details. In `remote` client mode, this works the same expect for no local debugging / crash triage. In *local* server mode, it's similar to local client mode and for `remote` server mode it just connects to a specified target and send mutated sample client data that the user specifies as inputs, but only a simple "can we still connect, if not then it probably crashed on the last one" triage is provided.
+**Litefuzz supports three different modes: local, client and server.**
+
+Local means targeting local binaries, which on Linux/Mac are launched via subprocess with automatic GDB and LLDB triage support respectively on crashes and via [WinAppDbg](https://github.com/MarioVilas/winappdbg) on Windows. Crashes are written to a local crash directory and sorted by fault type, such as read/write AVs or SIGABRT/SIGSEGV along with the file hashes. All unique crashes are triaged as it fuzzes and this data along with target output (as available) is also captured and placed as artifacts in the same directory. It's also possible to replay crashes with `--replay` and providing the crashing file. In `local` client mode, the input directory should contain a server greeting, response or otherwise data that a client would expect when connecting to a server.
+
+As of now only one "shot" is implementated for network fuzzing with no complex session support. The client is launched via command line and debugged the same as when file fuzzing. A listener is setup to support this scenario, yes its a slow and borderline manual labor but it works. If a crash is detected, it is replayed in gdb to get the triage details. In `remote` client mode, this works the same expect for no local debugging / crash triage. In *local* server mode, it's similar to local client mode and for `remote` server mode it just connects to a specified target and send mutated sample client data that the user specifies as inputs, but only a simple "can we still connect, if not then it probably crashed on the last one" triage is provided.
 
 There are a few mutation functions written from scratch which mostly do random mutations with a random selection of inputs specified by the `-i` flag. For file fuzzing, just select local mode and pass it the target command line with FUZZ denoting where the app expects the filename to parse, eg. `tcpdump -r FUZZ` along with an input directory of "good files" to mutate. For network client fuzzing, it's similar to local fuzzing, but also provide connection specifics via `-a`. And if you want to fuzz servers, do server mode and provide a `protocol://address:port` just like for clients.
 
@@ -138,7 +148,9 @@ In short...
 
 ## support
 
-Primarily tested on **Ubuntu Linux 20.04** (21.04 lightly tested), **Windows 10** and **Mac OS 11** (12 lightly tested). The fuzzer and setup scripts may work on slightly older or newer versions of these operating systems as well, but the majority of research, testing and development occurred in these environments. Python3 is supported and an effort was made to make the code compatiable with Python2 as well as it's necessary for fuzzing on Windows via [WinAppDbg](https://github.com/MarioVilas/winappdbg). Platform testing primarily occured on Intel-based hardware, but things seem to mostly work on Apple's M1 platform too (notable exceptions being on Linux the exploitable plugin for GDB probably isn't supported, nor is Pyradamsa). There are also setup scripts in setup/ to automate most or all of the tasks and depencency installation. It can generally fuzz native binaries on each platform, which are often compiled in C/C++, but it also catch crashes for Golang binaries as well (experimental).
+Primarily tested on **Ubuntu Linux 20.04** (22.04 and 21.04 lightly tested), **Windows 10** and **Mac OS 11** (12 lightly tested). The fuzzer and setup scripts may work on slightly older or newer versions of these operating systems as well, but the majority of research, testing and development occurred in these environments. Python3 is supported and an effort was made to make the code compatiable with Python2 as well as it's necessary for fuzzing on Windows via [WinAppDbg](https://github.com/MarioVilas/winappdbg).
+
+Platform testing primarily occured on Intel-based hardware, but things seem to mostly work on Apple's M1 platform too (notable exceptions being on Linux the exploitable plugin for GDB probably isn't supported, nor is Pyradamsa). There are also setup scripts in setup/ to automate most or all of the tasks and depencency installation. It can generally fuzz native binaries on each platform, which are often compiled in C/C++, but it also catch crashes for Golang binaries as well (experimental).
 
 ### python versions
 
@@ -220,6 +232,8 @@ Most of the setup across platforms has been automated with the scripts in the [s
 
 See [INSTALL.md](https://github.com/sec-tools/litefuzz/blob/main/INSTALL.md) for details.
 
+**After installation, refer to the example fuzzing of latex2rtf in the initial section for a quick run or dive into all the command line options and further examples detailed on this README.**
+
 ### tests
 
 #### unit tests
@@ -267,7 +281,9 @@ note: insulate mode has only been tested working on Linux and is not supported o
 `-x secs` allows you to specify a timeout. In practice, this is more like "approx how long between iterations" for CLI targets and an actual timeout for GUIs.
 
 ### mutators
-`--mutator N` specifies which mutator to use for fuzzing. If the option is not provided, a random choice from the list of available mutators is chosen for each fuzzing iteration. These mutators were written from scratch (with the exception of Radamsa of course). And while they have been extensively tested and have held up pretty well during millions of iterations, they may have subtle bugs from time to time, but generally this should not affect functionality.
+`--mutator N` specifies which mutator to use for fuzzing. If the option is not provided, a random choice from the list of available mutators is chosen for each fuzzing iteration.
+
+These mutators were written from scratch (with the exception of Radamsa of course). And while they have been extensively tested and have held up pretty well during millions of iterations, they may have subtle bugs from time to time, but generally this should not affect functionality.
 
 ```
 FLIP_MUTATOR = 1
@@ -322,10 +338,14 @@ On Linux, specific helpers can be chosen. For example, instead of just using gli
 The default Electric Fence malloc debugger is great, but it doesn't work with all targets. You can test the target with EF and if it crashes, select the glibc helper instead.
 
 ### checking live target output
-If fuzzing local apps on Linux or Mac, you can `cat /tmp/litefuzz/RUN_ID/fuzz.out` to check what the latest stdout was from the target. `RUN_ID` is shown in the STATS information area when fuzzing begins. In the event that a crash occurs, stdout is also captured in the crashes directory as the `.out` file. Global stdout/stderr also goes to `/tmp/litefuzz/out` for debugging purposes as well for all fuzzing targets with the exception of insulated or local server modes which debugger output goes to `/tmp/litefuzz/RUN_ID/out`. Winappdbg doesn't natively support capturing stdout of targets (AFAIK), so this artifact is not available on Windows.
+If fuzzing local apps on Linux or Mac, you can `cat /tmp/litefuzz/RUN_ID/fuzz.out` to check what the latest stdout was from the target. `RUN_ID` is shown in the STATS information area when fuzzing begins. In the event that a crash occurs, stdout is also captured in the crashes directory as the `.out` file. Global stdout/stderr also goes to `/tmp/litefuzz/out` for debugging purposes as well for all fuzzing targets with the exception of insulated or local server modes which debugger output goes to `/tmp/litefuzz/RUN_ID/out`.
+
+Winappdbg doesn't natively support capturing stdout of targets (AFAIK), so this artifact is not available on Windows.
 
 ### client and server modes
-If the server can be ran locally simply by executing the binary (with or without some flags and configuration), you can pass it's command line with `-c` and it will be started, fuzzed and killed with a new execution every iteration. The idea here is trading speed for the ability avoid those annoying bugs which triggered only after the target's memory is in a "certain state", which can lead to false positives. Same deal with locally fuzzing network clients. It even supports TLS connections, generating certificates for you on the fly (allowing the user to provide a client cert when fuzzing a server that requires it and certificate fuzzing itself are other ideas here). Debugging support is not provided by Litefuzz when fuzzing remote clients and servers, so setup on that remote end is up to the user. For servers, we simply check if the server stopped responding and note the previous payload as the crasher. This works fine for TCP connections, but we don't quite have this luxury for UDP services, so monitoring the remote server is left up to either the ReportCrash feature (available on Mac), running the target in a debugger (via local server mode or manually) or crafting custom supporting scripts. Also, some servers may auto-restart or otherwise recover after crashing, but there may be signs of this in the logs or other artifacts on the filesystem which can parsed by supporting scripts written for a particular target.
+If the server can be ran locally simply by executing the binary (with or without some flags and configuration), you can pass it's command line with `-c` and it will be started, fuzzed and killed with a new execution every iteration. The idea here is trading speed for the ability avoid those annoying bugs which triggered only after the target's memory is in a "certain state", which can lead to false positives. Same deal with locally fuzzing network clients. It even supports TLS connections, generating certificates for you on the fly (allowing the user to provide a client cert when fuzzing a server that requires it and certificate fuzzing itself are other ideas here). 
+
+Debugging support is not provided by Litefuzz when fuzzing remote clients and servers, so setup on that remote end is up to the user. For servers, we simply check if the server stopped responding and note the previous payload as the crasher. This works fine for TCP connections, but we don't quite have this luxury for UDP services, so monitoring the remote server is left up to either the ReportCrash feature (available on Mac), running the target in a debugger (via local server mode or manually) or crafting custom supporting scripts. Also, some servers may auto-restart or otherwise recover after crashing, but there may be signs of this in the logs or other artifacts on the filesystem which can parsed by supporting scripts written for a particular target.
 
 ### local network examples
 
@@ -350,7 +370,9 @@ d, right click Simple Network Management Protocol -> Export Packet Bytes -> resp
 
 ### remote network examples
 
-Fuzzing remote clients and servers is a bit more challenging: we have no local debugging and rely on catching a halt in interaction between the two parties over the network to catch crashes. Also, since we are assumedly blind to what's happening on the other end, fuzzing ends when the client or server stops responding and needs to be restarted manually after the client or server is restored to a normal (uncrashed) state unless the user has setup scripts on the remote side to manage this process. Again, UDP complicates this further. Even sending a test packet to see if there's a listening service on a UDP port doesn't guarantee a reply. So it's possible to remotely fuzz network clients and servers, but there's a trade-off on visibility.
+Fuzzing remote clients and servers is a bit more challenging: we have no local debugging and rely on catching a halt in interaction between the two parties over the network to catch crashes. Also, since we are assumedly blind to what's happening on the other end, fuzzing ends when the client or server stops responding and needs to be restarted manually after the client or server is restored to a normal (uncrashed) state unless the user has setup scripts on the remote side to manage this process.
+
+UDP complicates this further. Even sending a test packet to see if there's a listening service on a UDP port doesn't guarantee a reply. So it's possible to remotely fuzz network clients and servers, but there's a trade-off on visibility.
 
 #### client
 
@@ -362,7 +384,9 @@ Client mode is more finicky here because it's hard to tell whether a client has 
 
 #### server
 
-The pros and cons of fuzzing a server locally or remotely can help you make a decision of how to approach a target when both options are available. Basically, fuzzing with the server in a debugger is going to be slower but you'll be able to get crash logs with the automatic triage, whereas fuzzing the server in remote mode (even pointing it to the localhost) will be much faster on average, but you lose the high visibility, debugger-based triage capabilities but it will give you time to manually restart the server after each crash to keep going before it exits (TCP servers only, feature does not support UDP-based servers).
+The pros and cons of fuzzing a server locally or remotely can help you make a decision of how to approach a target when both options are available.
+
+Basically, fuzzing with the server in a debugger is going to be slower but you'll be able to get crash logs with the automatic triage, whereas fuzzing the server in remote mode (even pointing it to the localhost) will be much faster on average, but you lose the high visibility, debugger-based triage capabilities but it will give you time to manually restart the server after each crash to keep going before it exits (TCP servers only, feature does not support UDP-based servers).
 
 **Shoutcast**
 
@@ -524,7 +548,9 @@ REMOTE_SERVER_testbox.1_NNNN_3.zz	REMOTE_SERVER_localhost_NNNN_4.zz
 ```
 
 ### golang
-Apparently when Golang binaries crash, they may not actually go down with a traditional SIGSEGV, even if that's what they say in the panic info (Linux tested). They may instead crash with return code 2. So I guess that's what we're going with :) I'm sure there's a better explanation out there for how this works and edge cases around it, but one can use `--golang` to try and catch crashes in golang binaries on Linux.
+Apparently when Golang binaries crash, they may not actually go down with a traditional SIGSEGV, even if that's what they say in the panic info (Linux tested). They may instead crash with return code 2. So I guess that's what we're going with :)
+
+I'm sure there's a better explanation out there for how this works and edge cases around it, but one can use `--golang` to try and catch crashes in golang binaries on Linux.
 
 `litefuzz -l -c "evernote2md FUZZ" -i input/enex -o crashes/evernote2md --golang -n 100000`
 
@@ -557,7 +583,9 @@ Some targets ask for a static outfile location as part of their command line and
 ### minimization
 Minimizing crashing files is an interesting activity. You can even infer how a target is parsing data by comparing a repro with a minimized version.
 
-`-m` and passing a repro file with the target command line or address setup will attempt to generate a minimized version of the repro which still crashes the target, but smaller and without bytes that may not be necessary. During this minimization journey, it may even find new crashes. Only local modes are supported, but this still includes local client and server modes, so you can minimize network crashes as long as we can debug them locally.
+`-m` and passing a repro file with the target command line or address setup will attempt to generate a minimized version of the repro which still crashes the target, but smaller and without bytes that may not be necessary. During this minimization journey, it may even find new crashes.
+
+Only local modes are supported, but this still includes local client and server modes, so you can minimize network crashes as long as we can debug them locally.
 
 For example, this request is the original repro file.
 
@@ -754,7 +782,9 @@ When fuzzing on Windows, you may want to enable PageHeap and Memory Dumps for a 
 
 `sudo litefuzz -l -c "C:\Program Files (x86)\Adobe\Acrobat Reader DC\Reader\AcroRd32.exe" --memdump`
 
-Yes, run these commands using (g)sudo on Windows to easily elevate to Admin from the console and make the registry changes needed for the features to be enabled. And this also illustrates another nuance for enabling malloc debuggers for targets: on Linux and Mac, we're using runtime environment flags which need to be passed every time to enable this feature. For Windows, we're modifying the registry so once it's passed the first time, one doesn't need to pass `-z` or `--memdump` in the fuzzing command line again (unless to disable or re-enable them). 
+Yes, run these commands using (g)sudo on Windows to easily elevate to Admin from the console and make the registry changes needed for the features to be enabled.
+
+This also illustrates another nuance for enabling malloc debuggers for targets: on Linux and Mac, we're using runtime environment flags which need to be passed every time to enable this feature. For Windows, we're modifying the registry so once it's passed the first time, one doesn't need to pass `-z` or `--memdump` in the fuzzing command line again (unless to disable or re-enable them). 
 
 **fuzz PuTTY (puttygen)** (Windows)
 
