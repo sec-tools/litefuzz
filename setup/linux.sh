@@ -4,7 +4,7 @@
 #
 # litefuzz project
 #
-# setup and install deps on Ubuntu Linux (20.04 tested + Py3)
+# setup and install deps on Ubuntu Linux (22.04 tested + Py3)
 #
 # note: run as user with sudo privileges and in the litefuzz root directory
 #
@@ -14,7 +14,7 @@ echo -e "\ninstalling litefuzz deps and setup on Ubuntu Linux..."
 echo -e '\n> installing apt packages, enter the password for sudo if prompted\n'
 
 sudo apt update
-sudo apt install -y build-essential gnome-devel gcc gdb libgtk-3-dev python3 python3-dev python3-pip python3-tk python-tk python-dev electric-fence
+sudo apt install -y build-essential gnome-devel gcc gdb libgtk-3-dev python3 python3-dev python3-pip python3-tk python-tk electric-fence
 
 echo -e '\n> grabbing !exploitable for gdb\n'
 
