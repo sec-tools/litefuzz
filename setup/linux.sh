@@ -9,7 +9,7 @@
 # note: run as user with sudo privileges and in the litefuzz root directory
 #
 
-echo "\ninstalling litefuzz deps and setup on Ubuntu Linux..."
+echo -e "\ninstalling litefuzz deps and setup on Ubuntu Linux..."
 
 echo -e '\n> installing apt packages, enter the password for sudo if prompted\n'
 
