@@ -1,6 +1,6 @@
 # litefuzz
 
-A multi-platform fuzzer for poking at userland binaries, clients and servers.
+A multi-platform fuzzer for poking at userland binaries, clients and servers. [It has found bugs in 50+ apps and libraries](https://github.com/sec-tools/litefuzz#trophies).
 
 **Simple setup to start fuzzing on Linux, Mac and Windows**. It also comes with extensive documentation and examples below.
 
