@@ -2,7 +2,7 @@
 
 A multi-platform fuzzer for poking at userland binaries, clients and servers. [It has found bugs in 50+ apps and libraries](https://github.com/sec-tools/litefuzz#trophies).
 
-**Simple setup to start fuzzing on Linux, Mac and Windows**. It also comes with extensive documentation and examples below.
+**Simple setup to start fuzzing on Linux, Mac and Windows**.
 
 - [litefuzz](#litefuzz)
   - [intro](#intro)
@@ -601,7 +601,7 @@ Authorization: Basic YWRtaW46Y2hhbmdlbWU=
 Referer: http://localhost:8000/admin.cgi?mode=debug
 ```
 
-Now take a look at it's minimized version.
+Take a look at it's minimized version.
 
 ```
 GET /admin.cgi?mode=debug&option=a
@@ -609,7 +609,7 @@ Authorization:s YWRtaW46Y2hhbmdlbWU
 Referer:admin.cgi
 ```
 
-One can make some guesses about what the target is looking for and even the root cause of the crash.
+**Now can make some guesses about what the target is looking for and even the root cause of the crash.**
 
 1) The request is most important part
 2) option= can probably be a lot of different things
