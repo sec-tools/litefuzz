@@ -967,6 +967,7 @@ Litefuzz has fuzzed crashes out of various software packages such as...
 * GPUJPEG
 * GPAC Multimedia Framework
 * Google Draco
+* Google Quipper
 * GoPro GPR
 * GtkRadiant
 * IIPImage Server
