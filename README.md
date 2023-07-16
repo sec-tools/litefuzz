@@ -228,7 +228,9 @@ Again, the fuzzer can run on and support local apps, clients and servers on Linu
 
 ## getting started
 
-Most of the setup across platforms has been automated with the scripts in the [setup](https://github.com/sec-tools/litefuzz/blob/main/README.md#setup) directory. Simply run those from the litefuzz root and it should save you a lot of time and help enable some of what's needed for automated deployments. It's useful to use a VM to setup a clean OS and fuzzing environment as among other things its snapshot capabilities come in handy.
+Most of the setup across platforms has been automated with the scripts in the [setup](https://github.com/sec-tools/litefuzz/blob/main/README.md#setup) directory.
+
+Simply run those from the litefuzz root and it should save you a lot of time and help enable some of what's needed for automated deployments. It's useful to use a VM to setup a clean OS and fuzzing environment as among other things its snapshot capabilities come in handy.
 
 See [INSTALL.md](https://github.com/sec-tools/litefuzz/blob/main/INSTALL.md) for details.
 
@@ -256,7 +258,9 @@ A few examples of buggy apps for testing crash and triage capabilities on the di
 - (e) buffer overflow in client
 - (f) buffer overflow in server
 
-They are automatically built during setup and you can run them on the command line, in a debugger or use them to test as fuzzing targets. If running on Windows command line, check `Event Viewer -> Windows Logs -> Application` to see crashes.
+They are automatically built during setup and you can run them on the command line, in a debugger or use them to test as fuzzing targets.
+
+**If running on Windows command line, check `Event Viewer -> Windows Logs -> Application` to see crashes.**
 
 ## options
 There are a ton of different options and features to take advantage of various target scenarios. The following is a brief explanation and some examples to help understand how to use them.
