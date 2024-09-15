@@ -1,6 +1,8 @@
 # litefuzz
 
-A multi-platform fuzzer for poking at userland binaries, clients and servers. [It has found bugs in 50+ apps and libraries](https://github.com/sec-tools/litefuzz#trophies).
+A multi-platform fuzzer for poking at userland binaries, clients and servers.
+
+It has found bugs in [50+ apps and libraries](https://github.com/sec-tools/litefuzz#trophies) from top companies and open soruce.
 
 **Simple setup to start fuzzing on Linux, Mac and Windows**.
 
@@ -983,6 +985,7 @@ Litefuzz has fuzzed crashes out of various software packages such as...
 * libsndfile
 * Lion Vector Graphics (lvg)
 * L-SMASH
+* mp3-decoder
 * MindNode
 * minimp4
 * MiniWeb Server
