@@ -50,9 +50,9 @@ def main(cmdline):
     if(config.tls):
         try:
             if((config.mode == settings.SERVER) or (config.mode == settings.LOCAL_SERVER)):
-                config.context = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
+                config.context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
             else: # client
-                config.context = ssl.create_default_context(ssl.Purpose.SERVER_AUTH)
+                config.context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
 
             config.context.check_hostname = False
             config.context.verify_mode = ssl.CERT_NONE
