@@ -238,6 +238,72 @@ See [INSTALL.md](https://github.com/sec-tools/litefuzz/blob/main/INSTALL.md) for
 
 **After installation, refer to the example fuzzing of latex2rtf in the initial section for a quick run or dive into all the command line options and further examples detailed on this README.**
 
+### docker
+
+You can run litefuzz using Docker with the `Dockerfile` without installing dependencies locally. This is especially useful for quick testing or if you want to avoid installing dependencies on your system.
+
+The Dockerfile works both:
+- **From within the repo** - Uses local files (faster, includes local changes)
+- **Standalone** - Can be built from any directory (clones from GitHub)
+
+```bash
+# Build the Docker image (from any directory with Dockerfile)
+docker build -t litefuzz:latest .
+
+# Run litefuzz
+docker run --rm litefuzz:latest python3 litefuzz.py --help
+```
+
+#### docker example
+
+The built-in input from the repo is available at `/litefuzz/input/tex` - no need to mount input:
+
+```bash
+# Create crashes directory
+mkdir -p crashes
+
+# Run fuzzing with example input (1000 iterations with heap debugging)
+docker run --rm \
+  -v $(pwd)/crashes:/tmp/crashes \
+  litefuzz:latest \
+  python3 litefuzz.py -l -c "latex2rtf FUZZ" -i /litefuzz/input/tex -o /tmp/crashes -n 1000 -z
+```
+
+This will:
+- Fuzz latex2rtf with 1000 iterations
+- Use heap debugging (`-z` flag)
+- Save crashes to `./crashes` directory on your host
+- Use built-in input files from the repo at `/litefuzz/input/tex`
+
+If you want to use your own input files from the host:
+
+```bash
+# Create input directory with your test files
+mkdir -p input/tex crashes
+# Add your test files to input/tex/
+cp your-test.tex input/tex/
+
+# Run fuzzing with your input files
+docker run --rm \
+  -v $(pwd)/input:/litefuzz/input \
+  -v $(pwd)/crashes:/tmp/crashes \
+  litefuzz:latest \
+  python3 litefuzz.py -l -c "latex2rtf FUZZ" -i /litefuzz/input/tex -o /tmp/crashes -n 1000 -z
+```
+
+**Important:** Only mount input if you have files to use. Mounting an empty `input/` directory will override the built-in input and cause errors.
+
+#### notes
+
+- **Built-in input available** - Input from repo is at `/litefuzz/input/tex` (no mount needed)
+- Mount volumes with `-v` to persist crash outputs and access input files
+- Use `--network host` for network fuzzing to access localhost services
+- The image includes all dependencies and test apps pre-built
+- pyradamsa mutator is optional and may not be available (Linux-only feature)
+- The image is based on Ubuntu 24.04
+- **SYS_PTRACE is NOT required** for standard fuzzing - GDB crash triage works without it
+- For advanced debugging (attaching to processes), you may need `--cap-add=SYS_PTRACE`
+
 ### tests
 
 #### unit tests
