@@ -77,7 +77,7 @@ def unix(cmdline):
                                            env=config.env)
             else:
                 process = subprocess.Popen(cmdline,
-                                           stdin=open(config.current_input),
+                                           stdin=open(config.FUZZ_FILE),
                                            stdout=file,
                                            stderr=file,
                                            preexec_fn=os.setsid,
@@ -211,3 +211,4 @@ def windows(cmdline):
             # pass
 
     return SUCCESS
+
